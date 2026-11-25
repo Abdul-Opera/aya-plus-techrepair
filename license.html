@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Activation Required</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .lock-body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: Arial, sans-serif;
+        }
+        .lock-card {
+            width: 100%;
+            max-width: 450px;
+            padding: 35px;
+            background: #1e293b;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+            text-align: center;
+        }
+        .hwid-display {
+            background-color: #0f172a;
+            color: #38bdf8;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 6px;
+            border: 1px dashed #0284c7;
+            margin: 20px 0;
+            letter-spacing: 1px;
+            user-select: all;
+        }
+    </style>
+</head>
+<body class="lock-body">
+
+<div class="lock-card">
+    <h1 style="font-size: 26px; color: #ef4444; margin-top:0;">⚠️ Unlicensed Copy</h1>
+    <p style="color: #94a3b8; font-size: 14px; line-height: 1.6;">
+        This software is protected. Your current device is not authorized to run this application.
+    </p>
+    
+    <div style="margin-top: 25px; text-align: left;">
+        <label style="color: #cbd5e1;">1. Copy this Device Hardware ID:</label>
+        <div class="hwid-display" id="hwidBox">GENERATING...</div>
+        <p style="font-size: 12px; color: #64748b; margin-top: -10px; margin-bottom: 20px;">
+            Send this ID to the main software developer to request your personal verification key.
+        </p>
+    </div>
+
+    <form id="activationForm" style="text-align: left;">
+        <div class="form-group">
+            <label for="licenseKey" style="color: #cbd5e1;">2. Enter License Activation Key:</label>
+            <input type="text" id="licenseKey" required placeholder="KEY-XXXXX" 
+                   style="background: #0f172a; color: #fff; border: 1px solid #475569; padding: 12px; font-family: monospace;">
+        </div>
+        <button type="submit" style="background-color: #16a34a; padding: 12px; margin-top: 15px;">Activate Software</button>
+    </form>
+</div>
+
+<script>
+    const SECRET_SALT = "TECH_REPAIR_NIGERIA_2026_PRO";
+
+    // Replicate fingerprint algorithm to show their unique hardware address
+    function getHWID() {
+        const info = [
+            navigator.userAgent.replace(/[^a-zA-Z]/g, ""),
+            screen.width,
+            screen.height,
+            navigator.hardwareConcurrency || 4,
+            SECRET_SALT
+        ].join("-");
+        
+        let hash = 0;
+        for (let i = 0; i < info.length; i++) {
+            hash = (hash << 5) - hash + info.charCodeAt(i);
+            hash |= 0;
+        }
+        return "HWID-" + Math.abs(hash);
+    }
+
+    const currentHwid = getHWID();
+    document.getElementById('hwidBox').innerText = currentHwid;
+
+    // Check input license key logic
+    document.getElementById('activationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const inputtedKey = document.getElementById('licenseKey').value.trim();
+
+        // Calculate what the correct matching key should be for this HWID
+        let checkHash = 0;
+        const validationString = currentHwid + SECRET_SALT + "LICENSED";
+        for (let i = 0; i < validationString.length; i++) {
+            checkHash = (checkHash << 5) - checkHash + validationString.charCodeAt(i);
+            checkHash |= 0;
+        }
+        const correctKey = "KEY-" + Math.abs(checkHash);
+
+        if (inputtedKey === correctKey) {
+            localStorage.setItem('techrepair_license_key', inputtedKey);
+            alert("🎉 Software Activated Successfully on this Device!");
+            window.location.href = "login.html"; // Send to the secure login page
+        } else {
+            alert("❌ Invalid Activation Key! Please check for typos or contact the developer.");
+        }
+    });
+</script>
+</body>
+</html>

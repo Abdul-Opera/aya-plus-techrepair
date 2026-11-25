@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechRepair Pro - Secure Access</title>
+    <!-- Link to our global workshop styles -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Modern Layout Structure */
+        .login-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            transition: background-color 0.3s;
+        }
+
+        /* Fashioned Hero Header styling */
+        .premium-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .header-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header-content h1 {
+            font-size: 32px;
+            margin: 0 0 8px 0;
+            letter-spacing: 1px;
+            font-weight: 800;
+        }
+        .header-badge {
+            background-color: var(--primary);
+            padding: 4px 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+        .header-subtitle {
+            margin: 0;
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        /* Central Login Box Positioning */
+        .login-main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 35px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .card-title {
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* Validation Message styling */
+        .error-msg {
+            color: #ef4444;
+            background-color: #fee2e2;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 600;
+            text-align: center;
+            border: 1px solid #fca5a5;
+        }
+
+        /* Fashioned Business Footer styling */
+        .premium-footer {
+            background-color: var(--dark);
+            color: #94a3b8;
+            padding: 25px 20px;
+            text-align: center;
+            font-size: 13px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+        .footer-links {
+            margin-bottom: 10px;
+        }
+        .footer-links span {
+            margin: 0 10px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-wrapper">
+
+    <!-- Fashioned Workshop Header Element -->
+    <header class="premium-header">
+        <div class="header-content">
+            <span class="header-badge">GSM & Laptop Services</span>
+            <h1>🔧 AYA_PLUS TechRepair</h1>
+        </div>
+    </header>
+
+    <!-- Center Login Box Area -->
+    <main class="login-main">
+        <div class="login-card">
+            <h2 class="card-title">Sign In</h2>
+
+            <div class="error-msg" id="errorMsg">❌ Incorrect Username or Password!</div>
+
+            <form id="loginForm">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required placeholder="Enter admin username" style="padding: 12px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Enter secure password" style="padding: 12px;">
+                </div>
+                <button type="submit" style="padding: 14px;">Sign In to Dashboard →</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Fashioned Workshop Footer Element -->
+    <footer class="premium-footer">
+        <div class="footer-links">
+            <strong>AYA_PLUS TechRepair</strong>
+            <span>|</span>
+            Version 2.5 Pro
+        </div>
+        <div>&copy; 2026 AYA_PLUS Repair Workshop Management System. All Rights Reserved.</div>
+    </footer>
+
+</div>
+
+<script>
+    // ACCESS CREDENTIALS ROUTER
+    if (!localStorage.getItem('workshop_user')) {
+        localStorage.setItem('workshop_user', 'admin');
+        localStorage.setItem('workshop_pass', '12345');
+    }
+
+    const loginForm = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
+
+    // Automatically check for dark mode profile and match the layout color
+    const savedTheme = localStorage.getItem('repairAppTheme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    // Skip page if logged in
+    if (localStorage.getItem('isRepairAppLoggedIn') === 'true') {
+        window.location.href = 'index.html';
+    }
+
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const userIn = document.getElementById('username').value.trim();
+        const passIn = document.getElementById('password').value;
+
+        const currentSystemUser = localStorage.getItem('workshop_user');
+        const currentSystemPass = localStorage.getItem('workshop_pass');
+
+        if (userIn === currentSystemUser && passIn === currentSystemPass) {
+            localStorage.setItem('isRepairAppLoggedIn', 'true');
+            window.location.href = 'index.html';
+        } else {
+            errorMsg.style.display = 'block';
+            document.getElementById('password').value = '';
+        }
+    });
+</script>
+</body>
+</html>

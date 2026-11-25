@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSM & Laptop Repair Inventory Pro</title>
+    <!-- Link to our style sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <!-- Dashboard Header Row with Secure Control Buttons -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;" class="no-print">
+        <h1 style="margin: 0;">🔧 AYA_PLUS TechRepair</h1>
+        <div style="display: flex; gap: 10px;">
+            <button id="darkModeToggle" style="width: auto; background-color: #64748b; padding: 8px 15px; font-size: 14px;">🌓 Dark Mode</button>
+            <button id="logoutBtn" style="width: auto; background-color: #ef4444; padding: 8px 15px; font-size: 14px;">🔒 Log Out</button>
+        </div>
+    </div>
+
+    <!-- Job Intake Form Section -->
+    <div class="card" id="formCard">
+        <h2>Capture New Repair Ticket</h2>
+        <form id="repairForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="gadgetName">Gadget Name & Model</label>
+                    <input type="text" id="gadgetName" required placeholder="e.g., iPhone 13 Pro, HP G8">
+                </div>
+                <div class="form-group">
+                    <label for="customerName">Customer Name</label>
+                    <input type="text" id="customerName" required placeholder="Full Name">
+                </div>
+                <div class="form-group">
+                    <label for="customerPhone">Phone Number</label>
+                    <input type="tel" id="customerPhone" required placeholder="Phone Number">
+                </div>
+                <div class="form-group">
+                    <label for="estimatedCost">Total Repair Cost (₦)</label>
+                    <input type="number" id="estimatedCost" required placeholder="Total Amount" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="depositPaid">Deposit Paid (₦)</label>
+                    <input type="number" id="depositPaid" required placeholder="Amount Paid (0 if none)" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="initialStatus">Initial Status</label>
+                    <select id="initialStatus">
+                        <option value="Pending">Pending Evaluation</option>
+                        <option value="Fixing">In Progress / Fixing</option>
+                        <option value="Ready">Ready for Collection</option>
+                    </select>
+                </div>
+
+                <!-- Live Balance Due Preview Box -->
+<div class="form-group" style="display: flex; align-items: center; justify-content: center;">
+    <div id="liveBalanceContainer" style="background: rgba(37, 99, 235, 0.08); border: 1px dashed var(--primary); padding: 12px 20px; border-radius: 6px; text-align: center; width: 100%; box-sizing: border-box;">
+        <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Live Balance Due</span>
+        <div id="liveBalanceCalc" style="font-size: 22px; font-weight: 800; color: var(--primary); margin-top: 2px;">₦0</div>
+    </div>
+</div>
+
+                <div class="form-group full-width">
+                    <label for="gadgetProblem">Fault / Problem Description</label>
+                    <textarea id="gadgetProblem" required placeholder="Describe what needs to be fixed..."></textarea>
+                </div>
+            </div>
+            <button type="submit">Save Repair & Generate Ticket</button>
+        </form>
+    </div>
+
+
+
+        <!-- Main Workspace Card Section -->
+    <div class="card">
+        <!-- Interactive Navigation Tabs -->
+        <div class="tab-container no-print" style="flex-wrap: wrap; gap: 8px;">
+            <button class="tab-btn active" id="tabActive" onclick="switchView('active')">🛠️ Active Workshop Log</button>
+            <button class="tab-btn" id="tabArchive" onclick="switchView('archive')">📦 Completed History Archive</button>
+            <button class="tab-btn" id="tabReports" onclick="switchView('reports')">📊 Financial Reports</button>
+            <button class="tab-btn" id="tabDailyExpenses" onclick="switchView('dailyExpenses')">🍱 Daily Life Expenses</button>
+            <button class="tab-btn" id="tabToolExpenses" onclick="switchView('toolExpenses')">🧰 Repair Tool Expenses</button>
+            <button class="tab-btn" id="tabSettings" onclick="switchView('settings')">⚙️ System Settings</button>
+        </div>
+
+
+        <!-- This panel displays your Workshop Log Tables -->
+                <!-- This panel displays your Workshop Log Tables -->
+        <div id="logDataPanel">
+            <h2 id="logHeading" style="margin-top: 15px;">Active Workshop Log</h2>
+            
+            <!-- NEW LIVE TOTALS BANNER FOR ARCHIVE VIEW -->
+                       <!-- UPDATED LIVE TOTALS BANNER WITH BULK DELETE ACCELERATOR -->
+            <div id="archiveSummaryBanner" style="display: none; background: var(--border); padding: 15px; border-radius: 6px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <div style="margin: 0; font-size: 15px; font-weight: 600;">📦 Total Archived Records: <span id="archiveCount" style="color: var(--primary);">0</span></div>
+                    <div style="margin: 0; font-size: 18px; font-weight: 800; color: var(--success);">💰 Total Finances Settled: <span id="archiveFinancesTotal">₦0</span></div>
+                </div>
+                <div>
+                    <button id="bulkDeleteBtn" style="width: auto; background-color: #ef4444; color: white; padding: 8px 14px; font-size: 13px; border-radius: 4px;" class="no-print">🗑️ Clear Records > 30 Days</button>
+                </div>
+            </div>
+
+
+            <input type="text" id="searchBox" class="search-box" placeholder="🔍 Search records by Ticket ID, Customer, Phone, or Device...">
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr id="tableHeaderRow">
+                            <!-- Injected dynamically by JS -->
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTable">
+                        <!-- JavaScript injects dynamic rows here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- Financial Reports Dashboard Panel -->
+        <div id="reportsPanel" style="display: none; padding-top: 10px;">
+            <h2>Workshop Financial Ledger</h2>
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 25px;">Live metrics evaluating your current inventory pipeline and collected business cash flow.</p>
+            
+                        <div class="stats-grid">
+                <div class="stat-card box-blue">
+                    <h4>🛠️ Active Pipeline Value</h4>
+                    <div class="stat-num" id="statPipeline">₦0</div>
+                    <p>Total value of active repairs</p>
+                </div>
+                <div class="stat-card box-orange">
+                    <h4>💵 Deposits Collected</h4>
+                    <div class="stat-num" id="statDeposits">₦0</div>
+                    <p>Advance down-payments held</p>
+                </div>
+                <div class="stat-card box-red">
+                    <h4>⏳ Balance Outstanding</h4>
+                    <div class="stat-num" id="statOutstanding">₦0</div>
+                    <p>Money pending customer pickup</p>
+                </div>
+                <div class="stat-card box-red" style="border-left: 5px solid #b91c1c; background: rgba(185, 28, 28, 0.04);">
+                    <h4>🍱 Life & Tool Expenses</h4>
+                    <div class="stat-num" id="statTotalExpenses">₦0</div>
+                    <p>All recorded operational spend</p>
+                </div>
+                <div class="stat-card box-green" style="grid-column: span 2; border-left: 5px solid #047857; background: rgba(4, 120, 87, 0.06);">
+                    <h4>🎉 Today's Net Settled Profit (Minus Expenses)</h4>
+                    <div class="stat-num" id="statDailyProfit" style="font-size: 32px;">₦0</div>
+                    <p id="statTodayDate">Closed jobs minus all recorded expenses</p>
+                </div>
+            </div>
+
+        </div>
+
+<!----------------------------------------------------------->
+        <!-- Daily Life Expenses Panel -->
+        <div id="dailyExpensesPanel" style="display: none; padding-top: 10px;">
+            <h2>Daily Life Activities Expenses</h2>
+                        <!-- Live Total Indicator Banner for Personal Expenses -->
+            <div style="background: rgba(239, 68, 68, 0.1); border-left: 5px solid #ef4444; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                <div style="font-size: 14px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">💰 Total Personal Outflow</div>
+                <div style="font-size: 28px; font-weight: 800; color: #b91c1c; margin-top: 4px;" id="totalDailyExpensesBanner">₦0</div>
+            </div>
+
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Track your personal cash outflows like feeding, transport, family support, and household items.</p>
+            <form id="dailyExpenseForm" style="margin-bottom: 30px; background: rgba(0,0,0,0.02); padding: 15px; border-radius: 6px; border: 1px solid var(--border);">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="dailyExpenseDesc">Expense Description</label>
+                        <input type="text" id="dailyExpenseDesc" required placeholder="e.g., Lunch food, Fuel for personal car">
+                    </div>
+                    <div class="form-group">
+                        <label for="dailyExpenseAmount">Amount (₦)</label>
+                        <input type="number" id="dailyExpenseAmount" required placeholder="Amount spent" min="1">
+                    </div>
+                </div>
+                <button type="submit" class="btn-success" style="width: auto;">Log Personal Expense</button>
+            </form>
+
+            <!-- Live Search Filter for Personal Expenses -->
+<input type="text" id="searchDailyExpenses" class="search-box" placeholder="🔍 Search personal expenses by description..." style="margin-bottom: 15px; padding: 10px; font-size: 14px;">
+
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Amount Paid</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dailyExpensesTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Repair Tool Expenses Panel -->
+        <div id="toolExpensesPanel" style="display: none; padding-top: 10px;">
+            <h2>Workshop Repair Tools Expenses</h2>
+                        <!-- Live Total Indicator Banner for Workshop Tools -->
+            <div style="background: rgba(234, 88, 12, 0.1); border-left: 5px solid #ea580c; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                <div style="font-size: 14px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">💰 Total Tools Outflow</div>
+                <div style="font-size: 28px; font-weight: 800; color: #c2410c; margin-top: 4px;" id="totalToolExpensesBanner">₦0</div>
+            </div>
+
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Track investments into shop equipment like soldering irons, multi-meters, screens, chargers, or rework stations.</p>
+            <form id="toolExpenseForm" style="margin-bottom: 30px; background: rgba(0,0,0,0.02); padding: 15px; border-radius: 6px; border: 1px solid var(--border);">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="toolExpenseDesc">Tool Name / Purpose</label>
+                        <input type="text" id="toolExpenseDesc" required placeholder="e.g., Sunshine Soldering Paste, T12 Pro Station">
+                    </div>
+                    <div class="form-group">
+                        <label for="toolExpenseAmount">Amount (₦)</label>
+                        <input type="number" id="toolExpenseAmount" required placeholder="Amount spent" min="1">
+                    </div>
+                </div>
+                <button type="submit" style="width: auto; background-color: var(--warning);">Log Tool Expense</button>
+            </form>
+
+            <!-- Live Search Filter for Tool Expenses -->
+<input type="text" id="searchToolExpenses" class="search-box" placeholder="🔍 Search tool investments by name or purpose..." style="margin-bottom: 15px; padding: 10px; font-size: 14px;">
+
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Tool/Item Details</th>
+                            <th>Amount Spent</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="toolExpensesTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+<!------------------------------------------------------->
+                <!-- This panel displays your Settings and Backups configuration -->
+        <div id="settingsPanel" style="display: none; padding-top: 10px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                
+                <!-- Left Column: Password Management -->
+                <div>
+                    <h2>Security Configuration</h2>
+                    <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Update your administrative username and password details below.</p>
+                    <form id="settingsForm">
+                        <div class="form-group">
+                            <label for="newUsername">Admin Username</label>
+                            <input type="text" id="newUsername" required placeholder="Enter username">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" required placeholder="Enter new password">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" required placeholder="Retype password to confirm">
+                        </div>
+                        <button type="submit" class="btn-success" style="width: auto;">Save Access Changes</button>
+                    </form>
+                </div>
+
+                <!-- Right Column: Database Cloud/Local Backups -->
+                <div style="border-left: 1px solid var(--border); padding-left: 20px;" id="backupSection">
+                    <h2>Database Backup & Restore</h2>
+                    <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Protect your business records. Export your database regularly and save it securely to Google Drive or your email.</p>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3>📥 Create Backup</h3>
+                        <p style="font-size: 13px; color: #64748b;">Download your inventory data as a file onto this phone or computer.</p>
+                        <button id="exportBtn" style="background-color: var(--primary); width: auto;">Download Backup File</button>
+                    </div>
+
+                    <div>
+                        <h3>📤 Restore Database</h3>
+                        <p style="font-size: 13px; color: #64748b;">Upload a previously downloaded backup file to load all your jobs onto this device.</p>
+                        <input type="file" id="importFile" accept=".json" style="margin-bottom: 15px; border: 1px dashed var(--border); padding: 15px; background: transparent; cursor: pointer;">
+                        <button id="importBtn" class="btn-success" style="width: auto;">Upload & Restore Data</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Receipt Popup Box -->
+<div class="overlay" id="overlay"></div>
+<div class="receipt-popup" id="receiptPopup">
+    <div id="printArea" class="receipt-slip">
+        <h3>REPAIR SLIP</h3>
+        <p class="receipt-subtitle">Keep this safely for collection</p>
+        <hr class="dashed-line">
+        <p><strong>TICKET ID:</strong> <span id="recId" class="receipt-id"></span></p>
+        <p><strong>Date Opened:</strong> <span id="recDate"></span></p>
+        <p><strong>Device:</strong> <span id="recGadget"></span></p>
+        <p><strong>Customer:</strong> <span id="recName"></span></p>
+        <p><strong>Phone:</strong> <span id="recPhone"></span></p>
+        <p><strong>Fault:</strong> <span id="recFault"></span></p>
+        <hr class="dashed-line">
+        <p>Total Bill: <span id="recTotal"></span></p>
+        <p>Deposit Paid: <span id="recDeposit"></span></p>
+        <p><b>Balance Due: <span id="recBalance"></span></b></p>
+    </div>
+    <div class="modal-buttons no-print">
+        <button onclick="window.print()" class="btn-success">🖨️ Print Slip</button>
+        <button onclick="closeReceipt()" class="btn-dark">Close</button>
+    </div>
+</div>
+
+<!-- Link to our application logic script -->
+<script src="app.js"></script>
+</body>
+</html>
